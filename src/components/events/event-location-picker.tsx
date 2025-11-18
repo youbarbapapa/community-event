@@ -1,11 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  GoogleMap,
-  Marker,
-  useJsApiLoader,
-} from "@react-google-maps/api";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import { clientEnv } from "@/env-client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -57,13 +53,13 @@ export function EventLocationPicker({ value, onChange, onStatusChange }: Props) 
   const [isLoading, setIsLoading] = useState(false);
   const [center, setCenter] = useState(defaultCenter);
 
-  const loaderOptions = {
+  const loaderOptions: Parameters<typeof useJsApiLoader>[0] = {
     id: "google-maps-script",
     googleMapsApiKey: clientEnv.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
     language: "en",
     region: "GB",
     libraries: ["maps"],
-  } as const;
+  };
   const { isLoaded } = useJsApiLoader(loaderOptions);
 
   useEffect(() => {

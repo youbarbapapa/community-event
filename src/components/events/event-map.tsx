@@ -1,11 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import {
-  GoogleMap,
-  Marker,
-  useJsApiLoader,
-} from "@react-google-maps/api";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import type { EventView } from "@/types/domain";
 import { clientEnv } from "@/env-client";
 
@@ -33,13 +29,13 @@ const communityIcon =
   );
 
 export function EventMap({ events }: Props) {
-  const loaderOptions = {
+  const loaderOptions: Parameters<typeof useJsApiLoader>[0] = {
     id: "google-maps-script",
     googleMapsApiKey: clientEnv.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
     language: "en",
     region: "GB",
     libraries: ["maps"],
-  } as const;
+  };
   const { isLoaded } = useJsApiLoader(loaderOptions);
 
   const markers = useMemo(

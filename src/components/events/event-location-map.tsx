@@ -15,13 +15,13 @@ const containerStyle = {
 };
 
 export function EventLocationMap({ latitude, longitude }: Props) {
-  const loaderOptions = {
+  const loaderOptions: Parameters<typeof useJsApiLoader>[0] = {
     id: "google-maps-script",
     googleMapsApiKey: clientEnv.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
     language: "en",
     region: "GB",
     libraries: ["maps"],
-  } as const;
+  };
   const { isLoaded } = useJsApiLoader(loaderOptions);
 
   const position = useMemo(() => ({ lat: latitude, lng: longitude }), [latitude, longitude]);
