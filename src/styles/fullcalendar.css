@@ -1,0 +1,71 @@
+.fc {
+  --fc-border-color: hsl(var(--border));
+  --fc-button-bg-color: hsl(var(--foreground));
+  --fc-button-text-color: hsl(var(--background));
+  --fc-button-hover-bg-color: hsl(var(--foreground) / 0.85);
+  --fc-neutral-bg-color: hsl(var(--muted));
+  --fc-page-bg-color: transparent;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.fc .fc-toolbar {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+:where(.fc) .fc-button {
+  border-radius: 9999px !important;
+  border: none !important;
+  padding: 0.35rem 0.9rem !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+  background: hsl(var(--muted)) !important;
+  color: hsl(var(--foreground)) !important;
+  transition: background 150ms ease, color 150ms ease !important;
+}
+
+:where(.fc) .fc-button:hover {
+  background: hsl(var(--muted) / 0.8) !important;
+}
+
+:where(.fc) .fc-button.fc-button-active {
+  background-image: var(--gradient-primary) !important;
+  color: hsl(var(--accent-foreground)) !important;
+}
+
+.fc .fc-daygrid-day-number,
+.fc .fc-col-header-cell-cushion {
+  color: hsl(var(--foreground));
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.fc-theme-standard td,
+.fc-theme-standard th {
+  border-color: var(--fc-border-color);
+}
+
+.fc .fc-daygrid-event {
+  border-radius: 0.75rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  border: none;
+}
+
+.fc .fc-event-main {
+  color: hsl(var(--background));
+}
+
+.fc .fc-scrollgrid {
+  border-radius: 1.5rem;
+  border: 1px solid hsl(var(--border));
+  overflow: hidden;
+}

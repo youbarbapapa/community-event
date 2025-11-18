@@ -1,0 +1,270 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  COMMUNITY
+  ORG_ADMIN
+  ADMIN
+  MODERATOR
+}
+
+enum InstitutionCategory {
+  LIBRARY
+  CHILDRENS_CENTRE
+  COUNCIL_SERVICE
+  COMMUNITY_GROUP
+  OTHER
+}
+
+enum InstitutionVerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum InstitutionClaimStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum InstitutionMemberRole {
+  ADMIN
+  EDITOR
+}
+
+enum EventStatus {
+  COMMUNITY
+  OFFICIAL
+  HIDDEN
+}
+
+enum RSVPVisibility {
+  PUBLIC
+  PRIVATE
+}
+
+enum ReportStatus {
+  OPEN
+  IN_REVIEW
+  RESOLVED
+  REJECTED
+}
+
+enum ReportTargetType {
+  EVENT
+  INSTITUTION
+  USER
+}
+
+model User {
+  id              String              @id @default(cuid())
+  email           String              @unique
+  username        String              @unique @default(uuid())
+  firstName       String?
+  lastName        String?
+  avatarUrl       String?
+  postcode        String?
+  onboardingCompleted Boolean         @default(false)
+  role            Role                @default(COMMUNITY)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  accounts        Account[]
+  sessions        Session[]
+  events          Event[]             @relation("EventCreator")
+  editedEvents    Event[]             @relation("EventEditor")
+  savedEvents     EventAttendee[]
+  institutions    Institution[]       @relation("InstitutionCreator")
+  institutionMemberships InstitutionMember[]
+  institutionClaims InstitutionClaim[]
+  reviewedClaims  InstitutionClaim[]  @relation("ClaimReviewer")
+  auditLogs       AuditLog[]          @relation("AuditActor")
+  reports         Report[]            @relation("ReportCreator")
+  resolvedReports Report[]            @relation("ReportResolver")
+}
+
+model Institution {
+  id                  String                         @id @default(cuid())
+  name                String
+  slug                String                         @unique
+  description         String?
+  category            InstitutionCategory            @default(OTHER)
+  addressLine1        String
+  addressLine2        String?
+  city                String
+  borough             String
+  postcode            String
+  latitude            Decimal?                       @db.Decimal(10, 7)
+  longitude           Decimal?                       @db.Decimal(10, 7)
+  contactEmail        String?
+  phone               String?
+  website             String?
+  verificationStatus  InstitutionVerificationStatus  @default(PENDING)
+  verifiedAt          DateTime?
+  createdAt           DateTime                       @default(now())
+  updatedAt           DateTime                       @updatedAt
+  createdBy           User                           @relation("InstitutionCreator", fields: [createdById], references: [id])
+  createdById         String
+  events              Event[]
+  claims              InstitutionClaim[]
+  members             InstitutionMember[]
+  reports             Report[]
+}
+
+model InstitutionMember {
+  id             String                 @id @default(cuid())
+  institution    Institution            @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  institutionId  String
+  user           User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  role           InstitutionMemberRole  @default(ADMIN)
+  createdAt      DateTime               @default(now())
+
+  @@unique([institutionId, userId])
+}
+
+model InstitutionClaim {
+  id             String                   @id @default(cuid())
+  institution    Institution              @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  institutionId  String
+  user           User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  status         InstitutionClaimStatus   @default(PENDING)
+  evidenceUrl    String?
+  notes          String?
+  reviewedBy     User?                    @relation("ClaimReviewer", fields: [reviewedById], references: [id])
+  reviewedById   String?
+  reviewedAt     DateTime?
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+}
+
+model Event {
+  id                String         @id @default(cuid())
+  slug              String         @unique
+  institution       Institution?   @relation(fields: [institutionId], references: [id], onDelete: SetNull)
+  institutionId     String?
+  createdBy         User           @relation("EventCreator", fields: [createdById], references: [id])
+  createdById       String
+  lastEditedBy      User?          @relation("EventEditor", fields: [lastEditedById], references: [id])
+  lastEditedById    String?
+  title             String
+  summary           String
+  startAt           DateTime
+  endAt             DateTime
+  recurrenceRule    String?
+  addressLine1      String
+  addressLine2      String?
+  city              String
+  borough           String
+  postcode          String
+  latitude          Decimal?       @db.Decimal(10, 7)
+  longitude         Decimal?       @db.Decimal(10, 7)
+  status            EventStatus    @default(COMMUNITY)
+  audienceTags      String[]       @default([])
+  costType          String         @default("free")
+  priceMin          Int?
+  priceMax          Int?
+  accessibilityTags String[]       @default([])
+  capacity          Int?
+  bookingUrl        String?
+  contactEmail      String?
+  contactPhone      String?
+  officialVerifiedAt DateTime?
+  visibilityDefault RSVPVisibility @default(PUBLIC)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  attendees         EventAttendee[]
+  reports           Report[]
+}
+
+model EventAttendee {
+  id          String         @id @default(cuid())
+  event       Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId     String
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  visibility  RSVPVisibility @default(PRIVATE)
+  createdAt   DateTime       @default(now())
+
+  @@unique([eventId, userId])
+}
+
+model Report {
+  id            String           @id @default(cuid())
+  targetType    ReportTargetType
+  targetId      String
+  reason        String
+  description   String?
+  status        ReportStatus     @default(OPEN)
+  createdBy     User             @relation("ReportCreator", fields: [createdById], references: [id])
+  createdById   String
+  resolvedBy    User?            @relation("ReportResolver", fields: [resolvedById], references: [id])
+  resolvedById  String?
+  event         Event?           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId       String?
+  institution   Institution?     @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  institutionId String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  resolvedAt    DateTime?
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actor      User?    @relation("AuditActor", fields: [actorId], references: [id])
+  actorId    String?
+  entityType String
+  entityId   String
+  action     String
+  payload    Json?
+  createdAt  DateTime @default(now())
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?  @db.Text
+  access_token      String?  @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?  @db.Text
+  session_state     String?
+  refresh_token_expires_in Int?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
