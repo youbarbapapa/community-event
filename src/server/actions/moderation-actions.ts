@@ -10,8 +10,8 @@ import {
   InstitutionVerificationStatus,
   ReportStatus,
   Role,
-} from "@/generated/prisma/enums";
-import type { Prisma } from "@/generated/prisma/client";
+} from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 const resolveClaimSchema = z.object({
   claimId: z.string().min(1),

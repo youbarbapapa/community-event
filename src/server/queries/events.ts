@@ -1,6 +1,6 @@
 import { cache } from "react";
-import type { Prisma } from "@/generated/prisma/client";
-import { EventStatus } from "@/generated/prisma/enums";
+import type { Prisma } from "@prisma/client";
+import { EventStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { EventView } from "@/types/domain";
 import { decimalToNumber } from "@/lib/utils";

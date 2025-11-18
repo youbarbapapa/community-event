@@ -5,7 +5,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import type { Adapter, AdapterUser } from "next-auth/adapters";
 import { prisma } from "@/lib/prisma";
 import { env } from "@/env";
-import type { Role } from "@/generated/prisma/enums";
+import type { Role } from "@prisma/client";
 
 const providers: Provider[] = [];
 

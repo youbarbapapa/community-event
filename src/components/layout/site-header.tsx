@@ -4,7 +4,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { AuthActions } from "@/components/auth/auth-actions";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
-import type { Role } from "@/generated/prisma/enums";
+import type { Role } from "@prisma/client";
 
 export async function SiteHeader() {
   const session = await auth();

@@ -11,7 +11,7 @@ import {
   createInstitutionAction,
   type CreateInstitutionState,
 } from "@/server/actions/institution-actions";
-import { InstitutionCategory } from "@/generated/prisma/enums";
+import { InstitutionCategory } from "@prisma/client";
 
 const initialState: CreateInstitutionState = { status: "idle" };
 

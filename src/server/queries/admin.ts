@@ -1,6 +1,6 @@
 import { cache } from "react";
-import type { Prisma } from "@/generated/prisma/client";
-import { InstitutionVerificationStatus, ReportStatus } from "@/generated/prisma/enums";
+import type { Prisma } from "@prisma/client";
+import { InstitutionVerificationStatus, ReportStatus } from "@prisma/client";
 import type { AdminMetric } from "@/types/domain";
 import { prisma } from "@/lib/prisma";
 import { getEventCounts, getEventsAddedThisWeek } from "./events";

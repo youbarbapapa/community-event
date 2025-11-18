@@ -1,6 +1,6 @@
 import type { EventView } from "@/types/domain";
 import { prisma } from "@/lib/prisma";
-import type { Role } from "@/generated/prisma/enums";
+import type { Role } from "@prisma/client";
 
 type ManageableEvent = Pick<EventView, "id" | "createdById" | "institutionId">;
 

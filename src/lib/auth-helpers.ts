@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import type { Role } from "@/generated/prisma/enums";
+import type { Role } from "@prisma/client";
 
 export async function requireUser() {
   const session = await auth();

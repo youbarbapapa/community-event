@@ -5,7 +5,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth-helpers";
 import { generateSlug } from "@/lib/utils";
-import { InstitutionCategory } from "@/generated/prisma/enums";
+import { InstitutionCategory } from "@prisma/client";
 
 const claimSchema = z.object({
   institutionId: z.string().min(1),

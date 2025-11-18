@@ -1,6 +1,6 @@
 import { cache } from "react";
-import type { Prisma } from "@/generated/prisma/client";
-import { InstitutionVerificationStatus } from "@/generated/prisma/enums";
+import type { Prisma } from "@prisma/client";
+import { InstitutionVerificationStatus } from "@prisma/client";
 import type { InstitutionSummary } from "@/types/domain";
 import { prisma } from "@/lib/prisma";
 

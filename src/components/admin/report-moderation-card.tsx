@@ -11,7 +11,7 @@ import {
   type ModerationState,
 } from "@/server/actions/moderation-actions";
 import type { PendingReport } from "@/server/queries/admin";
-import { EventStatus } from "@/generated/prisma/enums";
+import { EventStatus } from "@prisma/client";
 
 type Props = {
   report: PendingReport;

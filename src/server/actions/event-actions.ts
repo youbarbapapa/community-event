@@ -9,7 +9,7 @@ import {
   EventStatus,
   InstitutionVerificationStatus,
   Role,
-} from "@/generated/prisma/enums";
+} from "@prisma/client";
 import { canManageEvent } from "@/lib/permissions";
 
 const eventSchema = z.object({
