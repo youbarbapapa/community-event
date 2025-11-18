@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useMemo, useState } from "react";
+import { useFormStatus } from "react-dom";
 import type { ReactNode } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -249,12 +250,19 @@ export function EventForm({
           )}
         </div>
         <div className="flex flex-wrap gap-3">
-          <Button variant="primary" type="submit">
-            {submitLabel}
-          </Button>
+          <EventFormSubmitButton label={submitLabel} />
         </div>
       </Card>
       {sideContent && <div className="space-y-6">{sideContent}</div>}
     </form>
+  );
+}
+
+function EventFormSubmitButton({ label }: { label: string }) {
+  const { pending } = useFormStatus();
+  return (
+    <Button variant="primary" type="submit" disabled={pending} aria-busy={pending}>
+      {pending ? "Saving..." : label}
+    </Button>
   );
 }

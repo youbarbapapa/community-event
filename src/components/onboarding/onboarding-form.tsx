@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect } from "react";
+import { useFormStatus } from "react-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -73,14 +74,27 @@ export function OnboardingForm({ defaultUsername, defaultPostcode }: Props) {
           {state.message}
         </div>
       )}
-      <Button type="submit" size="lg" className="w-full">
-        Save and continue
-      </Button>
+      <SubmitButton />
       {state.status === "success" && state.message && (
         <div className="pointer-events-none fixed right-4 top-4 z-50">
           <ToastMessage message={state.message} />
         </div>
       )}
     </form>
+  );
+}
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button
+      type="submit"
+      size="lg"
+      className="w-full"
+      disabled={pending}
+      aria-busy={pending}
+    >
+      {pending ? "Saving..." : "Save and continue"}
+    </Button>
   );
 }

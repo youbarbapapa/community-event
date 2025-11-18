@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -83,10 +84,17 @@ export function InstitutionCreateForm() {
         {state.status === "success" && state.message && (
           <p className="text-sm text-emerald-600">{state.message}</p>
         )}
-        <Button type="submit" size="lg">
-          Submit institution
-        </Button>
+        <SubmitInstitutionButton />
       </Card>
     </form>
+  );
+}
+
+function SubmitInstitutionButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" size="lg" disabled={pending} aria-busy={pending}>
+      {pending ? "Submitting..." : "Submit institution"}
+    </Button>
   );
 }

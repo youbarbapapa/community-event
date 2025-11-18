@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -46,17 +47,8 @@ export function ClaimInstitutionForm({ institutionId }: Props) {
           placeholder="Evidence link (optional)"
         />
         <div className="flex gap-3">
-          <Button size="sm" type="submit">
-            Submit claim
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            type="button"
-            onClick={() => setIsOpen(false)}
-          >
-            Cancel
-          </Button>
+          <SubmitClaimButton />
+          <CancelClaimButton onCancel={() => setIsOpen(false)} />
         </div>
       </form>
       {state.status !== "idle" && state.message && (
@@ -69,5 +61,29 @@ export function ClaimInstitutionForm({ institutionId }: Props) {
         </div>
       )}
     </>
+  );
+}
+
+function SubmitClaimButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button size="sm" type="submit" disabled={pending} aria-busy={pending}>
+      {pending ? "Submitting..." : "Submit claim"}
+    </Button>
+  );
+}
+
+function CancelClaimButton({ onCancel }: { onCancel: () => void }) {
+  const { pending } = useFormStatus();
+  return (
+    <Button
+      size="sm"
+      variant="ghost"
+      type="button"
+      onClick={onCancel}
+      disabled={pending}
+    >
+      Cancel
+    </Button>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useMemo, useState } from "react";
+import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { ToastMessage } from "@/components/ui/toast-message";
@@ -59,12 +60,7 @@ export function ReportModerationCard({ report }: Props) {
       </div>
       <form action={reportAction} className="flex flex-wrap gap-3">
         <input type="hidden" name="reportId" value={report.id} />
-        <Button size="sm" variant="primary" name="decision" value="resolve">
-          Resolve
-        </Button>
-        <Button size="sm" variant="ghost" name="decision" value="reject">
-          Reject
-        </Button>
+        <ReportDecisionButtons />
       </form>
       {report.event && (
         <form action={eventAction} className="flex flex-wrap items-center gap-3">
@@ -80,9 +76,7 @@ export function ReportModerationCard({ report }: Props) {
               </option>
             ))}
           </Select>
-          <Button size="sm" type="submit" variant="outline">
-            Update event status
-          </Button>
+          <UpdateStatusButton />
         </form>
       )}
       {reportState.status !== "idle" && reportState.message && (
@@ -104,5 +98,35 @@ export function ReportModerationCard({ report }: Props) {
         </div>
       )}
     </div>
+  );
+}
+
+function ReportDecisionButtons() {
+  const { pending } = useFormStatus();
+  return (
+    <>
+      <Button
+        size="sm"
+        variant="primary"
+        name="decision"
+        value="resolve"
+        disabled={pending}
+        aria-busy={pending}
+      >
+        {pending ? "Sending..." : "Resolve"}
+      </Button>
+      <Button size="sm" variant="ghost" name="decision" value="reject" disabled={pending}>
+        Reject
+      </Button>
+    </>
+  );
+}
+
+function UpdateStatusButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button size="sm" type="submit" variant="outline" disabled={pending} aria-busy={pending}>
+      {pending ? "Updating..." : "Update event status"}
+    </Button>
   );
 }

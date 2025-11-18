@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { ToastMessage } from "@/components/ui/toast-message";
 import {
@@ -45,14 +46,7 @@ export function ClaimModerationCard({ claim }: Props) {
           Review evidence
         </a>
       )}
-      <div className="mt-3 flex flex-wrap gap-3">
-        <Button size="sm" variant="primary" name="decision" value="approve">
-          Approve
-        </Button>
-        <Button size="sm" variant="ghost" name="decision" value="reject">
-          Reject
-        </Button>
-      </div>
+      <ModerationButtons />
       {state.status !== "idle" && state.message && (
         <div className="pointer-events-none absolute right-3 top-3">
           <ToastMessage
@@ -63,5 +57,32 @@ export function ClaimModerationCard({ claim }: Props) {
         </div>
       )}
     </form>
+  );
+}
+
+function ModerationButtons() {
+  const { pending } = useFormStatus();
+  return (
+    <div className="mt-3 flex flex-wrap gap-3">
+      <Button
+        size="sm"
+        variant="primary"
+        name="decision"
+        value="approve"
+        disabled={pending}
+        aria-busy={pending}
+      >
+        {pending ? "Processing..." : "Approve"}
+      </Button>
+      <Button
+        size="sm"
+        variant="ghost"
+        name="decision"
+        value="reject"
+        disabled={pending}
+      >
+        Reject
+      </Button>
+    </div>
   );
 }
